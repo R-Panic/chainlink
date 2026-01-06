@@ -74,12 +74,13 @@ func (c CapabilityConfiguration) Unmarshal() (capabilities.CapabilityConfigurati
 			case *capabilitiespb.CapabilityMethodConfig_RemoteTriggerConfig:
 				config = capabilities.CapabilityMethodConfig{
 					RemoteTriggerConfig: &capabilities.RemoteTriggerConfig{
-						RegistrationRefresh:     remoteCfg.RemoteTriggerConfig.RegistrationRefresh.AsDuration(),
-						RegistrationExpiry:      remoteCfg.RemoteTriggerConfig.RegistrationExpiry.AsDuration(),
-						MinResponsesToAggregate: remoteCfg.RemoteTriggerConfig.MinResponsesToAggregate,
-						MessageExpiry:           remoteCfg.RemoteTriggerConfig.MessageExpiry.AsDuration(),
-						MaxBatchSize:            remoteCfg.RemoteTriggerConfig.MaxBatchSize,
-						BatchCollectionPeriod:   remoteCfg.RemoteTriggerConfig.BatchCollectionPeriod.AsDuration(),
+						RegistrationRefresh:             remoteCfg.RemoteTriggerConfig.RegistrationRefresh.AsDuration(),
+						RegistrationExpiry:              remoteCfg.RemoteTriggerConfig.RegistrationExpiry.AsDuration(),
+						MinResponsesToAggregate:         remoteCfg.RemoteTriggerConfig.MinResponsesToAggregate,
+						MessageExpiry:                   remoteCfg.RemoteTriggerConfig.MessageExpiry.AsDuration(),
+						MaxBatchSize:                    remoteCfg.RemoteTriggerConfig.MaxBatchSize,
+						BatchCollectionPeriod:           remoteCfg.RemoteTriggerConfig.BatchCollectionPeriod.AsDuration(),
+						RegistrationStatusUpdateTimeout: remoteCfg.RemoteTriggerConfig.RegistrationStatusUpdateTimeout.AsDuration(),
 					},
 				}
 			case *capabilitiespb.CapabilityMethodConfig_RemoteExecutableConfig:

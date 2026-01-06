@@ -26,6 +26,7 @@ import (
 	billing "github.com/smartcontractkit/chainlink-protos/billing/go"
 	sdkpb "github.com/smartcontractkit/chainlink-protos/cre/go/sdk"
 	protoevents "github.com/smartcontractkit/chainlink-protos/workflows/go/events"
+	"github.com/smartcontractkit/chainlink/v2/core/capabilities/remote/trigger/registration"
 
 	"github.com/smartcontractkit/chainlink/v2/core/platform"
 	"github.com/smartcontractkit/chainlink/v2/core/services/workflows/events"
@@ -448,9 +449,14 @@ func (e *Engine) runTriggerSubscriptionPhase(ctx context.Context) error {
 				// no Config needed - NoDAG uses Payload
 			})
 			if regErr != nil {
-				e.logger().Errorw("Trigger registration failed", "triggerID", sub.Id, "err", regErr)
-				e.metrics.With(platform.KeyTriggerID, sub.Id).IncrementRegisterTriggerFailureCounter(gCtx)
-				return fmt.Errorf("failed to register trigger %s: %w", sub.Id, regErr)
+				if !errors.Is(regErr, registration.ErrUnableToDetermineRegistrationStatus) {
+					e.logger().Errorw("Trigger registration failed", "triggerID", sub.Id, "err", regErr)
+					e.metrics.With(platform.KeyTriggerID, sub.Id).IncrementRegisterTriggerFailureCounter(gCtx)
+					return fmt.Errorf("failed to register trigger %s: %w", sub.Id, regErr)
+				}
+				// For backwards compatibility log a warning and ignore, may be running against an old capabilities DON
+				// Possible this may be made mandatory in the future once DON migration is complete.
+				e.logger().Warnw("unable to determine trigger registration status for trigger registration request", "triggerID", sub.Id)
 			}
 			// Send successful result
 			resultsCh <- triggerRegResult{

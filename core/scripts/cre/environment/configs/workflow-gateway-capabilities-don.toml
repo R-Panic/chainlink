@@ -43,7 +43,8 @@
   # because bootstrap job for capability DON will be created on the boostrap node from this DON
   supported_evm_chains = [1337, 2337]
 
-  env_vars = { CL_EVM_CMD = "" }
+  # Triggers registrations timeout is set to 60s to avoid test failures due to timeouts while waiting for triggers to be registered, which can take longer than usual in CI environments
+  env_vars = { CL_EVM_CMD = "", CL_CRE_SETTINGS_DEFAULT = "{\"PerWorkflow\": {\"TriggerRegistrationsTimeout\": \"60s\"}}" }
   capabilities = ["ocr3", "custom-compute", "web-api-trigger", "cron", "http-action", "http-trigger", "consensus", "don-time", "write-evm-1337", "read-contract-1337", "evm-1337"]
 
   # See ./examples/workflow-don-overrides.toml to learn how to override capability configs

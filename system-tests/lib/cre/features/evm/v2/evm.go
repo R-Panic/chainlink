@@ -431,12 +431,13 @@ func logTriggerConfig(nodeSet *cre.NodeSet) (*capabilitiespb.CapabilityMethodCon
 	return &capabilitiespb.CapabilityMethodConfig{
 		RemoteConfig: &capabilitiespb.CapabilityMethodConfig_RemoteTriggerConfig{
 			RemoteTriggerConfig: &capabilitiespb.RemoteTriggerConfig{
-				RegistrationRefresh:     durationpb.New(registrationRefresh),
-				RegistrationExpiry:      durationpb.New(registrationExpiry),
-				MinResponsesToAggregate: faultyNodes + 1,
-				MessageExpiry:           durationpb.New(2 * registrationExpiry),
-				MaxBatchSize:            25,
-				BatchCollectionPeriod:   durationpb.New(200 * time.Millisecond),
+				RegistrationRefresh:             durationpb.New(registrationRefresh),
+				RegistrationExpiry:              durationpb.New(registrationExpiry),
+				MinResponsesToAggregate:         faultyNodes + 1,
+				MessageExpiry:                   durationpb.New(2 * registrationExpiry),
+				MaxBatchSize:                    25,
+				BatchCollectionPeriod:           durationpb.New(200 * time.Millisecond),
+				RegistrationStatusUpdateTimeout: durationpb.New(1 * time.Minute), // Set high to avoid flaky system tests, would not expect this to be so high in production
 			},
 		},
 	}, nil

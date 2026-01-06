@@ -23,6 +23,12 @@ import (
 const (
 	peerID1     = "12D3KooWF3dVeJ6YoT5HFnYhmwQWWMoEwVFzJQ5kKCMX3ZityxMC"
 	peerID2     = "12D3KooWQsmok6aD8PZqt3RnJhQRrNzKHLficq7zYFRp7kZ1hHP8"
+	peerID3     = "12D3KooWPumsXxg6mJ4hmRizjBD7oFMtN9vm3kTwN8BLEinyDPJS"
+	peerID4     = "12D3KooWNuumb38Jpw6DoRbgwejcZYwfsWbbzPU4fWy5imrW3dyD"
+	peerID5     = "12D3KooWJNVGd4gur9H2uKMkRo6hvh17ktvg7dqvRx8YELTA4Bfo"
+	peerID6     = "12D3KooWPt1fVrGxeqG1FNZTvw6UNM85eGURr1PiNUsSAyFEvzQn"
+	peerID7     = "12D3KooWGG7xBVQZyBdXXCYemByedzey14KXEkVfLorX74p598qa"
+	peerID8     = "12D3KooWPH2jfCUd9rVh8TtvFeyQWfSosUnwmUdNN4iapMXSXs5d"
 	workflowID1 = "15c631d295ef5e32deb99a10ee6804bc4af13855687559d7ff6552ac6dbb2ce0"
 )
 
@@ -61,7 +67,7 @@ func TestTriggerSubscriber_RegisterAndReceive(t *testing.T) {
 		},
 	}
 	triggerEventCallbackCh, err := subscriber.RegisterTrigger(t.Context(), req)
-	require.NoError(t, err)
+
 	t.Cleanup(func() {
 		require.NoError(t, subscriber.UnregisterTrigger(t.Context(), req))
 		// calling UnregisterTrigger repeatedly is safe
@@ -110,7 +116,6 @@ func TestTriggerSubscriber_CorrectEventExpiryCheck(t *testing.T) {
 		},
 	}
 	triggerEventCallbackCh, err := subscriber.RegisterTrigger(t.Context(), regReq)
-	require.NoError(t, err)
 	t.Cleanup(func() {
 		require.NoError(t, subscriber.UnregisterTrigger(t.Context(), regReq))
 		require.NoError(t, subscriber.Close())

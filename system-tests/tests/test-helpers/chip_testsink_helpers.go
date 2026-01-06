@@ -3,6 +3,7 @@ package helpers
 import (
 	"context"
 	"encoding/json"
+	"fmt"
 	"net"
 	"os"
 	"path/filepath"
@@ -359,6 +360,37 @@ func WaitForBaseMessage(
 				Str("expected_log", needle).
 				Str("found_message", strings.TrimSpace(msg.Msg)).
 				Msg("[soft assertion] Received BaseMessage message, but it does not match expected log")
+		}
+	}
+}
+
+func WaitForBaseMessageLabel(
+	ctx context.Context,
+	testLogger zerolog.Logger,
+	publishCh <-chan *commonevents.BaseMessage,
+	label string,
+	needle string,
+) (*commonevents.BaseMessage, error) {
+	for {
+		select {
+		case <-ctx.Done():
+			return nil, context.Cause(ctx)
+		case msg := <-publishCh:
+			if strings.Contains(msg.Labels[label], needle) {
+				return msg, nil
+			}
+
+			if strings.Contains(msg.Msg, "heartbeat") {
+				continue
+			}
+
+			warnMsg := "[soft assertion] Received BaseMessage message without matching label " + label
+			testLogger.Warn().
+				Str("expected_label", label).
+				Str("expected_label_value", needle).
+				Str("found_labels", fmt.Sprintf("%v", msg.Labels)).
+				Str("found_message", strings.TrimSpace(msg.Msg)).
+				Msg(warnMsg)
 		}
 	}
 }
