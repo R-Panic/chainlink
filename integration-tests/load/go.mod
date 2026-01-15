@@ -36,7 +36,7 @@ require (
 	github.com/smartcontractkit/chainlink-deployments-framework v0.74.2
 	github.com/smartcontractkit/chainlink-evm v0.3.4-0.20260114162311-d591d75b908f
 	github.com/smartcontractkit/chainlink-evm/gethwrappers v0.0.0-20251211123524-f0c4fe7cfc0a
-	github.com/smartcontractkit/chainlink-testing-framework/framework v0.13.0
+	github.com/smartcontractkit/chainlink-testing-framework/framework v0.13.2-0.20260115110935-e31fc5b6c2fc
 	github.com/smartcontractkit/chainlink-testing-framework/havoc v1.50.5
 	github.com/smartcontractkit/chainlink-testing-framework/lib v1.54.7
 	github.com/smartcontractkit/chainlink-testing-framework/seth v1.51.2
