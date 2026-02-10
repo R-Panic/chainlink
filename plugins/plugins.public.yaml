@@ -20,9 +20,7 @@ plugins:
 
   cosmos:
     - moduleURI: "github.com/smartcontractkit/chainlink-cosmos"
-      # Git reference - can be a tag, branch, or commit hash
-      # If not specified, uses the latest version.
-      gitRef: "v0.5.2-0.20260219133256-b46d473fd6f5"
+      gitRef: "v0.5.2-0.20260219133256-b46d473fd6f5" # 2026-02-19
       installPath: "./pkg/cosmos/cmd/chainlink-cosmos"
       # These will be copied into /usr/lib in the container.
       libs:
@@ -50,7 +48,7 @@ plugins:
 
   ton:
     - moduleURI: "github.com/smartcontractkit/chainlink-ton"
-      gitRef: "v0.0.0-20260218110243-cd2592187c66"
+      gitRef: "f8d460be61255d4895f74407a2c6bffe5aba5524"
       installPath: "./cmd/chainlink-ton"
 
   tron:
