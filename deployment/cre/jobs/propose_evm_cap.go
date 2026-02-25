@@ -44,6 +44,7 @@ type OverrideDefaultCfg struct {
 	ObservationPollPeriod         time.Duration `json:"observationPollPeriod,omitempty" yaml:"observationPollPeriod,omitempty"`
 	ChainHeightPollPeriod         time.Duration `json:"chainHeightPollPeriod,omitempty" yaml:"chainHeightPollPeriod,omitempty"`
 	UnknownRequestsTTL            time.Duration `json:"unknownRequestsTTL,omitempty" yaml:"unknownRequestsTTL,omitempty"`
+	DeltaStage                    time.Duration `json:"deltaStage,omitempty" yaml:"deltaStage,omitempty"`
 }
 
 type EVMCapabilityInput struct {
@@ -188,7 +189,7 @@ func (u ProposeEVMCapJobSpec) Apply(e cldf.Environment, input ProposeEVMCapJobSp
 		return cldf.ChangesetOutput{}, fmt.Errorf("failed to parse chain ID %s: %w", chainIDStr, err)
 	}
 
-	jobName := fmt.Sprintf("evm-capabilities-v2-%s-%s", chainName, input.Zone)
+	jobName := fmt.Sprintf("evm-cap-v2-%s-%s", chainName, input.Zone)
 	job := pkg.StandardCapabilityJob{
 		JobName:               jobName,
 		Command:               "/usr/local/bin/evm",

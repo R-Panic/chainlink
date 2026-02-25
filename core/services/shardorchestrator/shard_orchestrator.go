@@ -10,7 +10,7 @@ import (
 
 	"github.com/smartcontractkit/chainlink-common/pkg/logger"
 	"github.com/smartcontractkit/chainlink-common/pkg/services"
-	"github.com/smartcontractkit/chainlink-common/pkg/workflows/shardorchestrator"
+	"github.com/smartcontractkit/chainlink/v2/core/services/ring"
 )
 
 // ShardOrchestrator is the main service interface for the orchestrator.
@@ -24,7 +24,7 @@ type orchestrator struct {
 	services.StateMachine
 
 	grpcServer  *grpc.Server
-	grpcHandler *shardorchestrator.Server
+	grpcHandler *Server
 	listener    net.Listener
 	lggr        logger.Logger
 
@@ -37,10 +37,10 @@ type orchestrator struct {
 var _ ShardOrchestrator = (*orchestrator)(nil)
 
 // New creates a new ShardOrchestrator service.
-func New(port int, store *shardorchestrator.Store, lggr logger.Logger) ShardOrchestrator {
+func New(port int, ringStore *ring.Store, lggr logger.Logger) ShardOrchestrator {
 	lggr = logger.Named(lggr, "ShardOrchestrator")
 
-	grpcHandler := shardorchestrator.NewServer(store, lggr)
+	grpcHandler := NewServer(ringStore, lggr)
 
 	grpcServer := grpc.NewServer()
 	grpcHandler.RegisterWithGRPCServer(grpcServer)

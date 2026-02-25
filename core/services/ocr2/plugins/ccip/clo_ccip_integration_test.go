@@ -1,7 +1,6 @@
 package ccip_test
 
 import (
-	"context"
 	"encoding/json"
 	"math/big"
 	"testing"
@@ -119,15 +118,24 @@ func test_CLOSpecApprovalFlow(t *testing.T, ccipTH integrationtesthelpers.CCIPIn
 	bootstrapNode, _, configBlock := ccipTH.SetupAndStartNodes(t.Context(), t, int64(freeport.GetOne(t)))
 	jobParams := ccipTH.NewCCIPJobSpecParams(tokenPricesUSDPipeline, priceGetterConfiguration, configBlock)
 	jobParams.USDCAttestationAPI = "http://blah.com"
+	realContractAddress := ccipTH.Source.LinkToken.Address()
+	realContractAddress2 := ccipTH.Source.ARM.Address()
+
+	jobParams.USDCConfig = &config.USDCConfig{
+		AttestationAPI:                  "http://blah.com",
+		SourceTokenAddress:              realContractAddress,
+		SourceMessageTransmitterAddress: realContractAddress,
+		AttestationAPITimeoutSeconds:    5,
+	}
 	jobParams.LBTCConfigs = []config.LBTCConfig{
 		{
-			SourceTokenAddress:                 utils.RandomAddress(),
+			SourceTokenAddress:                 realContractAddress,
 			AttestationAPI:                     "http://lbtc.com",
 			AttestationAPITimeoutSeconds:       5,
 			AttestationAPIIntervalMilliseconds: 10,
 		},
 		{
-			SourceTokenAddress:                 utils.RandomAddress(),
+			SourceTokenAddress:                 realContractAddress2,
 			AttestationAPI:                     "http://lbtc-second.com",
 			AttestationAPITimeoutSeconds:       5,
 			AttestationAPIIntervalMilliseconds: 10,
@@ -160,7 +168,7 @@ func test_CLOSpecApprovalFlow(t *testing.T, ccipTH integrationtesthelpers.CCIPIn
 	ccipTH.Source.Chain.Commit()
 	blockHash := ccipTH.Dest.Chain.Commit()
 	// get the block number
-	block, err := ccipTH.Dest.Chain.Client().BlockByHash(context.Background(), blockHash)
+	block, err := ccipTH.Dest.Chain.Client().BlockByHash(t.Context(), blockHash)
 	require.NoError(t, err)
 	blockNumber := block.Number().Uint64() + 1 // +1 as a block will be mined for the request from EventuallyReportCommitted
 
