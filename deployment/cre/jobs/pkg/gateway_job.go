@@ -15,8 +15,23 @@ const (
 	GatewayHandlerTypeHTTPCapabilities   = "http-capabilities"
 	GatewayHandlerTypeVault              = "vault"
 
+	ServiceNameWorkflows = "workflows"
+	ServiceNameVault     = "vault"
+
 	minimumRequestTimeoutSec = 5
 )
+
+// HandlerServiceName returns the service name for a given handler type.
+func HandlerServiceName(handlerType string) string {
+	switch handlerType {
+	case GatewayHandlerTypeVault:
+		return ServiceNameVault
+	case GatewayHandlerTypeHTTPCapabilities, GatewayHandlerTypeWebAPICapabilities:
+		return ServiceNameWorkflows
+	default:
+		return handlerType
+	}
+}
 
 type TargetDONMember struct {
 	Address string
@@ -85,34 +100,9 @@ func (g GatewayJob) Resolve(gatewayNodeIdx int) (string, error) {
 		externalJobID = uuid.NewSHA1(uuid.Nil, []byte(g.JobName)).String()
 	}
 
-	dons := []don{}
-	for _, targetDON := range g.TargetDONs {
-		ms := []member{}
-		for _, mem := range targetDON.Members {
-			ms = append(ms, member(mem))
-		}
-
-		hs := []handler{}
-		for _, ht := range targetDON.Handlers {
-			switch ht {
-			case GatewayHandlerTypeWebAPICapabilities:
-				hs = append(hs, newDefaultWebAPICapabilitiesHandler())
-			case GatewayHandlerTypeVault:
-				hs = append(hs, newDefaultVaultHandler(g.RequestTimeoutSec))
-			case GatewayHandlerTypeHTTPCapabilities:
-				hs = append(hs, newDefaultHTTPCapabilitiesHandler())
-			default:
-				return "", errors.New("unknown handler type: " + ht)
-			}
-		}
-
-		d := don{
-			DonID:    targetDON.ID,
-			F:        targetDON.F,
-			Members:  ms,
-			Handlers: hs,
-		}
-		dons = append(dons, d)
+	shardedDONs, services, err := g.buildServicesAndShardedDONs()
+	if err != nil {
+		return "", err
 	}
 
 	requestTimeout := time.Duration(g.RequestTimeoutSec) * time.Second
@@ -146,7 +136,8 @@ func (g GatewayJob) Resolve(gatewayNodeIdx int) (string, error) {
 			AllowedPorts:     []int{443},
 			AllowedSchemes:   []string{"https"},
 		},
-		Dons: dons,
+		ShardedDONs: shardedDONs,
+		Services:    services,
 	}
 
 	if len(g.AllowedPorts) > 0 {
@@ -173,12 +164,90 @@ func (g GatewayJob) Resolve(gatewayNodeIdx int) (string, error) {
 		ForwardingAllowed: false,
 		GatewayConfig:     config,
 	}
-	b, err := toml.Marshal(spec)
-	if err != nil {
-		return "", err
+	b, marshalErr := toml.Marshal(spec)
+	if marshalErr != nil {
+		return "", marshalErr
 	}
 
 	return string(b), nil
+}
+
+func (g GatewayJob) buildServicesAndShardedDONs() ([]shardedDON, []service, error) {
+	var shardedDONs []shardedDON
+
+	type serviceEntry struct {
+		handlers []handler
+		donNames []string
+		// track handler names to avoid duplicates
+		handlerNames map[string]struct{}
+	}
+	serviceMap := make(map[string]*serviceEntry)
+	// preserve insertion order
+	var serviceOrder []string
+
+	for _, targetDON := range g.TargetDONs {
+		nodes := make([]member, len(targetDON.Members))
+		for i, mem := range targetDON.Members {
+			nodes[i] = member(mem)
+		}
+
+		shardedDONs = append(shardedDONs, shardedDON{
+			DonName: targetDON.ID,
+			F:       targetDON.F,
+			Shards:  []shard{{Nodes: nodes}},
+		})
+
+		for _, ht := range targetDON.Handlers {
+			svcName := HandlerServiceName(ht)
+
+			var h handler
+			switch ht {
+			case GatewayHandlerTypeWebAPICapabilities:
+				h = newDefaultWebAPICapabilitiesHandler()
+			case GatewayHandlerTypeVault:
+				h = newDefaultVaultHandler(g.RequestTimeoutSec)
+			case GatewayHandlerTypeHTTPCapabilities:
+				h = newDefaultHTTPCapabilitiesHandler()
+			default:
+				return nil, nil, errors.New("unknown handler type: " + ht)
+			}
+
+			entry, exists := serviceMap[svcName]
+			if !exists {
+				entry = &serviceEntry{handlerNames: make(map[string]struct{})}
+				serviceMap[svcName] = entry
+				serviceOrder = append(serviceOrder, svcName)
+			}
+
+			if _, dup := entry.handlerNames[ht]; !dup {
+				entry.handlers = append(entry.handlers, h)
+				entry.handlerNames[ht] = struct{}{}
+			}
+
+			donAlreadyReferenced := false
+			for _, d := range entry.donNames {
+				if d == targetDON.ID {
+					donAlreadyReferenced = true
+					break
+				}
+			}
+			if !donAlreadyReferenced {
+				entry.donNames = append(entry.donNames, targetDON.ID)
+			}
+		}
+	}
+
+	services := make([]service, 0, len(serviceMap))
+	for _, svcName := range serviceOrder {
+		entry := serviceMap[svcName]
+		services = append(services, service{
+			ServiceName: svcName,
+			Handlers:    entry.handlers,
+			DONs:        entry.donNames,
+		})
+	}
+
+	return shardedDONs, services, nil
 }
 
 type webAPICapabilitiesHandlerConfig struct {
@@ -235,10 +304,27 @@ type gatewaySpec struct {
 
 type gatewayConfig struct {
 	ConnectionManagerConfig connectionManagerConfig `toml:"ConnectionManagerConfig"`
-	Dons                    []don                   `toml:"Dons"`
+	ShardedDONs             []shardedDON            `toml:"ShardedDONs"`
+	Services                []service               `toml:"Services"`
 	HTTPClientConfig        httpClientConfig        `toml:"HTTPClientConfig"`
 	NodeServerConfig        nodeServerConfig        `toml:"NodeServerConfig"`
 	UserServerConfig        userServerConfig        `toml:"UserServerConfig"`
+}
+
+type service struct {
+	ServiceName string    `toml:"ServiceName"`
+	Handlers    []handler `toml:"Handlers"`
+	DONs        []string  `toml:"DONs"`
+}
+
+type shardedDON struct {
+	DonName string  `toml:"DonName"`
+	F       int     `toml:"F"`
+	Shards  []shard `toml:"Shards"`
+}
+
+type shard struct {
+	Nodes []member `toml:"Nodes"`
 }
 
 type connectionManagerConfig struct {
@@ -246,13 +332,6 @@ type connectionManagerConfig struct {
 	AuthGatewayID             string `toml:"AuthGatewayId"`
 	AuthTimestampToleranceSec int    `toml:"AuthTimestampToleranceSec"`
 	HeartbeatIntervalSec      int    `toml:"HeartbeatIntervalSec"`
-}
-
-type don struct {
-	DonID    string    `toml:"DonId"`
-	F        int       `toml:"F"`
-	Handlers []handler `toml:"Handlers"`
-	Members  []member  `toml:"Members"`
 }
 
 type handler struct {

@@ -32,69 +32,63 @@ AuthGatewayId = 'gateway-node-1'
 AuthTimestampToleranceSec = 5
 HeartbeatIntervalSec = 20
 
-[[gatewayConfig.Dons]]
-DonId = 'workflow_1'
+[[gatewayConfig.ShardedDONs]]
+DonName = 'workflow_1'
 F = 1
 
-[[gatewayConfig.Dons.Handlers]]
-Name = 'web-api-capabilities'
-
-[gatewayConfig.Dons.Handlers.Config]
-maxAllowedMessageAgeSec = 1000
-
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
-globalBurst = 10
-globalRPS = 50
-perSenderBurst = 10
-perSenderRPS = 10
-
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xabc'
 Name = 'Node 1'
 
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xdef'
 Name = 'Node 2'
 
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xghi'
 Name = 'Node 3'
 
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xjkl'
 Name = 'Node 4'
 
-[[gatewayConfig.Dons]]
-DonId = 'workflow_2'
+[[gatewayConfig.ShardedDONs]]
+DonName = 'workflow_2'
 F = 0
 
-[[gatewayConfig.Dons.Handlers]]
+[[gatewayConfig.ShardedDONs.Shards]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2abc'
+Name = 'Node 1'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2def'
+Name = 'Node 2'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2ghi'
+Name = 'Node 3'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2jkl'
+Name = 'Node 4'
+
+[[gatewayConfig.Services]]
+ServiceName = 'workflows'
+DONs = ['workflow_1', 'workflow_2']
+
+[[gatewayConfig.Services.Handlers]]
 Name = 'web-api-capabilities'
 
-[gatewayConfig.Dons.Handlers.Config]
+[gatewayConfig.Services.Handlers.Config]
 maxAllowedMessageAgeSec = 1000
 
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
+[gatewayConfig.Services.Handlers.Config.NodeRateLimiter]
 globalBurst = 10
 globalRPS = 50
 perSenderBurst = 10
 perSenderRPS = 10
-
-[[gatewayConfig.Dons.Members]]
-Address = '0x2abc'
-Name = 'Node 1'
-
-[[gatewayConfig.Dons.Members]]
-Address = '0x2def'
-Name = 'Node 2'
-
-[[gatewayConfig.Dons.Members]]
-Address = '0x2ghi'
-Name = 'Node 3'
-
-[[gatewayConfig.Dons.Members]]
-Address = '0x2jkl'
-Name = 'Node 4'
 
 [gatewayConfig.HTTPClientConfig]
 MaxResponseBytes = 50000000
@@ -134,82 +128,80 @@ AuthGatewayId = 'gateway-node-1'
 AuthTimestampToleranceSec = 5
 HeartbeatIntervalSec = 20
 
-[[gatewayConfig.Dons]]
-DonId = 'workflow_1'
+[[gatewayConfig.ShardedDONs]]
+DonName = 'workflow_1'
 F = 1
 
-[[gatewayConfig.Dons.Handlers]]
-Name = 'web-api-capabilities'
-
-[gatewayConfig.Dons.Handlers.Config]
-maxAllowedMessageAgeSec = 1000
-
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
-globalBurst = 10
-globalRPS = 50
-perSenderBurst = 10
-perSenderRPS = 10
-
-[[gatewayConfig.Dons.Handlers]]
-Name = 'vault'
-ServiceName = 'vault'
-
-[gatewayConfig.Dons.Handlers.Config]
-requestTimeoutSec = 14
-
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
-globalBurst = 10
-globalRPS = 50
-perSenderBurst = 10
-perSenderRPS = 10
-
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xabc'
 Name = 'Node 1'
 
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xdef'
 Name = 'Node 2'
 
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xghi'
 Name = 'Node 3'
 
-[[gatewayConfig.Dons.Members]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
 Address = '0xjkl'
 Name = 'Node 4'
 
-[[gatewayConfig.Dons]]
-DonId = 'workflow_2'
+[[gatewayConfig.ShardedDONs]]
+DonName = 'workflow_2'
 F = 0
 
-[[gatewayConfig.Dons.Handlers]]
+[[gatewayConfig.ShardedDONs.Shards]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2abc'
+Name = 'Node 1'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2def'
+Name = 'Node 2'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2ghi'
+Name = 'Node 3'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0x2jkl'
+Name = 'Node 4'
+
+[[gatewayConfig.Services]]
+ServiceName = 'workflows'
+DONs = ['workflow_1', 'workflow_2']
+
+[[gatewayConfig.Services.Handlers]]
 Name = 'web-api-capabilities'
 
-[gatewayConfig.Dons.Handlers.Config]
+[gatewayConfig.Services.Handlers.Config]
 maxAllowedMessageAgeSec = 1000
 
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
+[gatewayConfig.Services.Handlers.Config.NodeRateLimiter]
 globalBurst = 10
 globalRPS = 50
 perSenderBurst = 10
 perSenderRPS = 10
 
-[[gatewayConfig.Dons.Members]]
-Address = '0x2abc'
-Name = 'Node 1'
+[[gatewayConfig.Services]]
+ServiceName = 'vault'
+DONs = ['workflow_1']
 
-[[gatewayConfig.Dons.Members]]
-Address = '0x2def'
-Name = 'Node 2'
+[[gatewayConfig.Services.Handlers]]
+Name = 'vault'
+ServiceName = 'vault'
 
-[[gatewayConfig.Dons.Members]]
-Address = '0x2ghi'
-Name = 'Node 3'
+[gatewayConfig.Services.Handlers.Config]
+requestTimeoutSec = 14
 
-[[gatewayConfig.Dons.Members]]
-Address = '0x2jkl'
-Name = 'Node 4'
+[gatewayConfig.Services.Handlers.Config.NodeRateLimiter]
+globalBurst = 10
+globalRPS = 50
+perSenderBurst = 10
+perSenderRPS = 10
 
 [gatewayConfig.HTTPClientConfig]
 MaxResponseBytes = 50000000
@@ -249,55 +241,65 @@ AuthGatewayId = 'gateway-node-1'
 AuthTimestampToleranceSec = 5
 HeartbeatIntervalSec = 20
 
-[[gatewayConfig.Dons]]
-DonId = 'workflow_1'
+[[gatewayConfig.ShardedDONs]]
+DonName = 'workflow_1'
 F = 3
 
-[[gatewayConfig.Dons.Handlers]]
+[[gatewayConfig.ShardedDONs.Shards]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0xabc'
+Name = 'Node 1'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0xdef'
+Name = 'Node 2'
+
+[[gatewayConfig.ShardedDONs]]
+DonName = 'workflow_2'
+F = 0
+
+[[gatewayConfig.ShardedDONs.Shards]]
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0xghi'
+Name = 'Node 3'
+
+[[gatewayConfig.ShardedDONs.Shards.Nodes]]
+Address = '0xjkl'
+Name = 'Node 4'
+
+[[gatewayConfig.Services]]
+ServiceName = 'workflows'
+DONs = ['workflow_1']
+
+[[gatewayConfig.Services.Handlers]]
 Name = 'http-capabilities'
 ServiceName = 'workflows'
 
-[gatewayConfig.Dons.Handlers.Config]
+[gatewayConfig.Services.Handlers.Config]
 CleanUpPeriodMs = 600000
 
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
+[gatewayConfig.Services.Handlers.Config.NodeRateLimiter]
 globalBurst = 100
 globalRPS = 500
 perSenderBurst = 100
 perSenderRPS = 100
 
-[[gatewayConfig.Dons.Members]]
-Address = '0xabc'
-Name = 'Node 1'
+[[gatewayConfig.Services]]
+ServiceName = 'vault'
+DONs = ['workflow_2']
 
-[[gatewayConfig.Dons.Members]]
-Address = '0xdef'
-Name = 'Node 2'
-
-[[gatewayConfig.Dons]]
-DonId = 'workflow_2'
-F = 0
-
-[[gatewayConfig.Dons.Handlers]]
+[[gatewayConfig.Services.Handlers]]
 Name = 'vault'
 ServiceName = 'vault'
 
-[gatewayConfig.Dons.Handlers.Config]
+[gatewayConfig.Services.Handlers.Config]
 requestTimeoutSec = 14
 
-[gatewayConfig.Dons.Handlers.Config.NodeRateLimiter]
+[gatewayConfig.Services.Handlers.Config.NodeRateLimiter]
 globalBurst = 10
 globalRPS = 50
 perSenderBurst = 10
 perSenderRPS = 10
-
-[[gatewayConfig.Dons.Members]]
-Address = '0xghi'
-Name = 'Node 3'
-
-[[gatewayConfig.Dons.Members]]
-Address = '0xjkl'
-Name = 'Node 4'
 
 [gatewayConfig.HTTPClientConfig]
 MaxResponseBytes = 50000000
