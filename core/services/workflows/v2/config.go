@@ -325,7 +325,7 @@ func (c *EngineConfig) Validate() error {
 	}
 
 	if c.FeatureFlags == nil {
-		return errors.New("feature flags not set")
+		return errors.New("engine feature flags not set")
 	}
 
 	c.Hooks.setDefaultHooks()
