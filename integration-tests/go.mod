@@ -10,7 +10,7 @@ replace github.com/smartcontractkit/chainlink/deployment => ../deployment
 // Using a separate `require` here to avoid surrounding line changes
 // creating potential merge conflicts.
 require (
-	github.com/smartcontractkit/chainlink/deployment v0.0.0-20251020210257-0a6ec41648b4
+	github.com/smartcontractkit/chainlink/deployment v0.0.0-20260227235715-ea392916400a
 	github.com/smartcontractkit/chainlink/v2 v2.29.0
 )
 
