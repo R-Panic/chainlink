@@ -287,10 +287,10 @@ Address = "0x0008020304050607080900010203040506070809"
 	cfg := parseTOMLConfig(t, tomlConfig)
 	mgr := newConnectionManager(t, cfg, clockwork.NewFakeClock())
 
-	require.NotNil(t, mgr.DONConnectionManager("myDON_0"), "shard 0 connection manager should exist")
+	require.NotNil(t, mgr.DONConnectionManager("myDON"), "shard 0 connection manager should exist (bare name)")
 	require.NotNil(t, mgr.DONConnectionManager("myDON_1"), "shard 1 connection manager should exist")
 	require.Nil(t, mgr.DONConnectionManager("myDON_2"), "shard 2 should not exist")
-	require.Nil(t, mgr.DONConnectionManager("myDON"), "bare DON name should not exist")
+	require.Nil(t, mgr.DONConnectionManager("myDON_0"), "shard 0 should not use _0 suffix")
 }
 
 func TestConnectionManager_ShardedDONs_MultipleDONs(t *testing.T) {
@@ -322,8 +322,8 @@ Address = "0x0002020304050607080900010203040506070809"
 	cfg := parseTOMLConfig(t, tomlConfig)
 	mgr := newConnectionManager(t, cfg, clockwork.NewFakeClock())
 
-	require.NotNil(t, mgr.DONConnectionManager("donA_0"))
-	require.NotNil(t, mgr.DONConnectionManager("donB_0"))
+	require.NotNil(t, mgr.DONConnectionManager("donA"))
+	require.NotNil(t, mgr.DONConnectionManager("donB"))
 }
 
 func TestConnectionManager_ShardedDONs_DuplicateNodeAddress(t *testing.T) {
@@ -375,7 +375,7 @@ Address = "0x0001020304050607080900010203040506070809"
 	cfg := parseTOMLConfig(t, tomlConfig)
 	mgr := newConnectionManager(t, cfg, clockwork.NewFakeClock())
 
-	donMgr := mgr.DONConnectionManager("myDON_0")
+	donMgr := mgr.DONConnectionManager("myDON")
 	require.NotNil(t, donMgr)
 
 	err := donMgr.SendToNode(testutils.Context(t), "0x0001020304050607080900010203040506070809", nil)

@@ -66,6 +66,9 @@ type ShardedDONConfig struct {
 
 // ShardDONID returns the connection-manager ID for a given shard index (e.g. "myDON_0").
 func ShardDONID(donName string, shardIdx int) string {
+	if shardIdx == 0 {
+		return donName
+	}
 	return fmt.Sprintf("%s_%d", donName, shardIdx)
 }
 

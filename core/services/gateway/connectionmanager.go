@@ -113,6 +113,7 @@ func NewConnectionManager(gwConfig *config.GatewayConfig, clock clockwork.Clock,
 			shutdownCh: make(chan struct{}),
 			gMetrics:   gMetrics,
 			lggr:       logger.Named(lggr, "DONConnectionManager."+donConfig.DonId),
+			// TODO
 		}
 	}
 	for _, shardedDON := range gwConfig.ShardedDONs {
